@@ -57,7 +57,7 @@ project_root/
       • Window size: **1.0 s** (25 frames)
       • Step: **0.04 s** (1 frame)
 
----
+
 
 ### 🤝 Fusion Model
 
@@ -65,7 +65,7 @@ project_root/
 * [ ] **Group-level attention features:** Add "who looks at whom" social tokens for advanced social gaze modeling
 * [ ] **Cross-modal attention visualization and interpretability tools:** Visualize attention maps and improve model explainability
 
----
+
 
 ### 🚦 Training & Evaluation
 
@@ -74,7 +74,6 @@ project_root/
 * [ ] **Evaluation metrics:** Add L2 distance, AUC, and other relevant metrics
 * [ ] **Baseline & ablation experiments:** Compare with MMGaze, GazeLLE, and other published approaches
 
----
 
 ### 📚 Docs & Utilities
 
