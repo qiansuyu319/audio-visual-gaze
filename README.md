@@ -42,50 +42,49 @@ project_root/
 
 ---
 
+
+---
+
 ## 🚧 Project Development TODO
-- 🛠️ Feature Extraction
 
-[✓] Audio: eGeMAPS and Wav2Vec2.0 extraction, windowed features saved as .npy
+### 🛠️ Feature Extraction
 
-[✓] Visual: CLIP/DINOv2 features extraction, pre-processing, saving standardized features
+* \[✓] **Audio:** eGeMAPS and Wav2Vec2.0 extraction, windowed features saved as `.npy`
+* \[✓] **Visual:** CLIP/DINOv2 features extraction, pre-processing, saving standardized features
+* \[✓] **Semantic:** WhisperX transcription, XLM-R/M-CLIP embeddings, saving text features
+* \[✓] **Multimodal Alignment:**
+  Scripts for precise time/frame alignment of all modalities and ground truth labels
+  *— All features and labels are aligned using the same sliding window parameters:*
+      • Frame rate: **25 fps** (0.04 s per frame)
+      • Window size: **1.0 s** (25 frames)
+      • Step: **0.04 s** (1 frame)
 
-[✓] Semantic: WhisperX transcription, XLM-R/M-CLIP embeddings, saving text features
+---
 
- Multimodal alignment: Scripts for time/frame alignment across all modalities
+### 🤝 Fusion Model
 
-Fusion Model
+* \[✓] **Multi-modal Transformer fusion** (visual/audio/semantic token input)
+* [ ] **Group-level attention features:** Add "who looks at whom" social tokens for advanced social gaze modeling
+* [ ] **Cross-modal attention visualization and interpretability tools:** Visualize attention maps and improve model explainability
 
-[✓] Multi-modal Transformer fusion (visual/audio/semantic token input)
+---
 
-All features (visual, audio, semantic) and ground truth are aligned using a sliding window approach:
+### 🚦 Training & Evaluation
 
-Frame rate: 25 fps (0.04 s per frame)
+* \[✓] **Basic train/eval pipeline** using aligned features
+* [ ] **Batch/multi-clip training & efficient dataloading**
+* [ ] **Evaluation metrics:** Add L2 distance, AUC, and other relevant metrics
+* [ ] **Baseline & ablation experiments:** Compare with MMGaze, GazeLLE, and other published approaches
 
-Window size: 1.0 s (25 frames)
+---
 
-Step: 0.04 s (1 frame)
+### 📚 Docs & Utilities
 
- Add group-level attention features (e.g., "who looks at whom" social tokens)
+* \[✓] **Main README and example usage**
+* [ ] **Code comments and per-script usage docs**
+* [ ] **Config templates and demo visualizations**
 
- Cross-modal attention visualization and interpretability tools
-
-Training & Evaluation
-
-[✓] Basic train/eval pipeline using aligned features
-
- Batch/multi-clip training & efficient dataloading
-
- Add evaluation metrics (L2 distance, AUC, etc.)
-
- Baseline & ablation experiments (e.g., MMGaze, GazeLLE comparison)
-
-Docs & Utilities
-
-[✓] Main README and example usage
-
- Add code comments and per-script usage docs
-
- Add config templates and demo visualizations
+---
 
 ## 🚀 Getting Started
 
