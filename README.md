@@ -52,11 +52,10 @@ project_root/
 * \[✓] **Semantic:** WhisperX transcription, XLM-R/M-CLIP embeddings, saving text features
 * \[✓] **Multimodal Alignment:**
   Scripts for precise time/frame alignment of all modalities and ground truth labels
-  *— All features and labels are aligned using the same sliding window parameters:*
-      • Frame rate: **25 fps** (0.04 s per frame)
-      • Window size: **1.0 s** (25 frames)
-      • Step: **0.04 s** (1 frame)
-
+    **All features and labels are aligned using the same sliding window parameters:**
+    - Frame rate: **25 fps** (0.04 s per frame)
+    - Window size: **1.0 s** (25 frames)
+    - Step: **0.04 s** (1 frame)
 
 
 ### 🤝 Fusion Model
