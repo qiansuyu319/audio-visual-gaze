@@ -1,0 +1,15 @@
+{
+    "source_audio": "C:\\Users\\qians\\Desktop\\gazelle-main\\data\\012.wav",
+    "output_dir": "C:\\Users\\qians\\Desktop\\gazelle-main\\processed_audio_output",
+    "params": {
+        "target_sr": 16000,
+        "window_size_s": 1.0,
+        "step_s": 0.04,
+        "total_windows": 472,
+        "source_duration_s": 19.8763125,
+        "features_extracted": [
+            "egemaps",
+            "wav2vec"
+        ]
+    }
+}

@@ -1,0 +1,19 @@
+model:
+  audio_dim: 768
+  text_dim: 768
+  visual_dim: 512
+  d_model: 256
+  heatmap_size: 32
+
+dataset:
+  image_dir: data/frames
+  audio_feat_dir: data/audio_feat
+  text_feat_dir: data/text_feat
+  heatmap_dir: data/heatmaps
+  inout_label_path: data/inout_labels.csv
+
+train:
+  batch_size: 16
+  epochs: 20
+  lr: 0.0001
+  save_dir: outputs/ 

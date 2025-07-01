@@ -1,0 +1,728 @@
+{
+  "segments": [
+    {
+      "start": 0.031,
+      "end": 7.427,
+      "text": " The writers are doing a very great job of giving the audience enough movement without ruining the tension, which is hard to do.",
+      "words": [
+        {
+          "word": "The",
+          "start": 0.031,
+          "end": 0.211,
+          "score": 0.837
+        },
+        {
+          "word": "writers",
+          "start": 0.231,
+          "end": 0.472,
+          "score": 0.844
+        },
+        {
+          "word": "are",
+          "start": 0.532,
+          "end": 0.592,
+          "score": 0.559
+        },
+        {
+          "word": "doing",
+          "start": 0.612,
+          "end": 0.732,
+          "score": 0.524
+        },
+        {
+          "word": "a",
+          "start": 0.753,
+          "end": 0.773,
+          "score": 0.386
+        },
+        {
+          "word": "very",
+          "start": 0.833,
+          "end": 0.993,
+          "score": 0.886
+        },
+        {
+          "word": "great",
+          "start": 1.073,
+          "end": 1.274,
+          "score": 0.827
+        },
+        {
+          "word": "job",
+          "start": 1.394,
+          "end": 1.695,
+          "score": 0.999
+        },
+        {
+          "word": "of",
+          "start": 1.875,
+          "end": 1.935,
+          "score": 0.917
+        },
+        {
+          "word": "giving",
+          "start": 2.055,
+          "end": 2.336,
+          "score": 0.874
+        },
+        {
+          "word": "the",
+          "start": 2.356,
+          "end": 2.456,
+          "score": 0.683
+        },
+        {
+          "word": "audience",
+          "start": 2.536,
+          "end": 2.837,
+          "score": 0.804
+        },
+        {
+          "word": "enough",
+          "start": 2.957,
+          "end": 3.278,
+          "score": 0.918
+        },
+        {
+          "word": "movement",
+          "start": 3.879,
+          "end": 4.28,
+          "score": 0.877
+        },
+        {
+          "word": "without",
+          "start": 4.32,
+          "end": 4.641,
+          "score": 0.842
+        },
+        {
+          "word": "ruining",
+          "start": 4.701,
+          "end": 5.042,
+          "score": 0.85
+        },
+        {
+          "word": "the",
+          "start": 5.082,
+          "end": 5.162,
+          "score": 0.908
+        },
+        {
+          "word": "tension,",
+          "start": 5.242,
+          "end": 5.703,
+          "score": 0.864
+        },
+        {
+          "word": "which",
+          "start": 5.783,
+          "end": 5.923,
+          "score": 0.89
+        },
+        {
+          "word": "is",
+          "start": 6.004,
+          "end": 6.084,
+          "score": 0.924
+        },
+        {
+          "word": "hard",
+          "start": 6.364,
+          "end": 7.106,
+          "score": 0.622
+        },
+        {
+          "word": "to",
+          "start": 7.146,
+          "end": 7.226,
+          "score": 0.976
+        },
+        {
+          "word": "do.",
+          "start": 7.266,
+          "end": 7.427,
+          "score": 0.991
+        }
+      ]
+    },
+    {
+      "start": 7.447,
+      "end": 19.913,
+      "text": "I think it's cool to watch because it never gets boring because one of them will be dating someone else and then they'll break up and he's into it now and the other one isn't anymore.",
+      "words": [
+        {
+          "word": "I",
+          "start": 7.447,
+          "end": 7.467,
+          "score": 0.997
+        },
+        {
+          "word": "think",
+          "start": 8.85,
+          "end": 8.99,
+          "score": 0.993
+        },
+        {
+          "word": "it's",
+          "start": 9.03,
+          "end": 9.15,
+          "score": 0.775
+        },
+        {
+          "word": "cool",
+          "start": 9.19,
+          "end": 9.351,
+          "score": 0.693
+        },
+        {
+          "word": "to",
+          "start": 9.391,
+          "end": 9.431,
+          "score": 0.412
+        },
+        {
+          "word": "watch",
+          "start": 9.511,
+          "end": 9.772,
+          "score": 0.778
+        },
+        {
+          "word": "because",
+          "start": 9.812,
+          "end": 10.032,
+          "score": 0.711
+        },
+        {
+          "word": "it",
+          "start": 10.072,
+          "end": 10.112,
+          "score": 0.668
+        },
+        {
+          "word": "never",
+          "start": 10.633,
+          "end": 10.794,
+          "score": 0.836
+        },
+        {
+          "word": "gets",
+          "start": 10.834,
+          "end": 10.994,
+          "score": 0.81
+        },
+        {
+          "word": "boring",
+          "start": 11.094,
+          "end": 11.495,
+          "score": 0.937
+        },
+        {
+          "word": "because",
+          "start": 11.555,
+          "end": 11.756,
+          "score": 0.654
+        },
+        {
+          "word": "one",
+          "start": 12.517,
+          "end": 12.598,
+          "score": 0.826
+        },
+        {
+          "word": "of",
+          "start": 12.638,
+          "end": 12.678,
+          "score": 0.997
+        },
+        {
+          "word": "them",
+          "start": 12.718,
+          "end": 12.818,
+          "score": 0.949
+        },
+        {
+          "word": "will",
+          "start": 12.858,
+          "end": 12.998,
+          "score": 0.947
+        },
+        {
+          "word": "be",
+          "start": 13.018,
+          "end": 13.079,
+          "score": 0.719
+        },
+        {
+          "word": "dating",
+          "start": 13.119,
+          "end": 13.379,
+          "score": 0.962
+        },
+        {
+          "word": "someone",
+          "start": 13.439,
+          "end": 13.74,
+          "score": 0.899
+        },
+        {
+          "word": "else",
+          "start": 13.84,
+          "end": 14.081,
+          "score": 0.687
+        },
+        {
+          "word": "and",
+          "start": 14.221,
+          "end": 14.301,
+          "score": 0.657
+        },
+        {
+          "word": "then",
+          "start": 14.341,
+          "end": 14.522,
+          "score": 0.823
+        },
+        {
+          "word": "they'll",
+          "start": 14.562,
+          "end": 15.724,
+          "score": 0.496
+        },
+        {
+          "word": "break",
+          "start": 15.744,
+          "end": 16.045,
+          "score": 0.609
+        },
+        {
+          "word": "up",
+          "start": 16.125,
+          "end": 16.205,
+          "score": 0.76
+        },
+        {
+          "word": "and",
+          "start": 16.506,
+          "end": 16.586,
+          "score": 0.859
+        },
+        {
+          "word": "he's",
+          "start": 16.646,
+          "end": 16.827,
+          "score": 0.782
+        },
+        {
+          "word": "into",
+          "start": 16.887,
+          "end": 17.147,
+          "score": 0.849
+        },
+        {
+          "word": "it",
+          "start": 17.227,
+          "end": 17.267,
+          "score": 0.802
+        },
+        {
+          "word": "now",
+          "start": 17.308,
+          "end": 17.548,
+          "score": 0.92
+        },
+        {
+          "word": "and",
+          "start": 17.628,
+          "end": 17.708,
+          "score": 0.911
+        },
+        {
+          "word": "the",
+          "start": 17.728,
+          "end": 17.889,
+          "score": 0.367
+        },
+        {
+          "word": "other",
+          "start": 17.949,
+          "end": 18.109,
+          "score": 0.757
+        },
+        {
+          "word": "one",
+          "start": 18.209,
+          "end": 18.31,
+          "score": 0.987
+        },
+        {
+          "word": "isn't",
+          "start": 18.33,
+          "end": 18.63,
+          "score": 0.705
+        },
+        {
+          "word": "anymore.",
+          "start": 18.67,
+          "end": 19.913,
+          "score": 0.786
+        }
+      ]
+    }
+  ],
+  "word_segments": [
+    {
+      "word": "The",
+      "start": 0.031,
+      "end": 0.211,
+      "score": 0.837
+    },
+    {
+      "word": "writers",
+      "start": 0.231,
+      "end": 0.472,
+      "score": 0.844
+    },
+    {
+      "word": "are",
+      "start": 0.532,
+      "end": 0.592,
+      "score": 0.559
+    },
+    {
+      "word": "doing",
+      "start": 0.612,
+      "end": 0.732,
+      "score": 0.524
+    },
+    {
+      "word": "a",
+      "start": 0.753,
+      "end": 0.773,
+      "score": 0.386
+    },
+    {
+      "word": "very",
+      "start": 0.833,
+      "end": 0.993,
+      "score": 0.886
+    },
+    {
+      "word": "great",
+      "start": 1.073,
+      "end": 1.274,
+      "score": 0.827
+    },
+    {
+      "word": "job",
+      "start": 1.394,
+      "end": 1.695,
+      "score": 0.999
+    },
+    {
+      "word": "of",
+      "start": 1.875,
+      "end": 1.935,
+      "score": 0.917
+    },
+    {
+      "word": "giving",
+      "start": 2.055,
+      "end": 2.336,
+      "score": 0.874
+    },
+    {
+      "word": "the",
+      "start": 2.356,
+      "end": 2.456,
+      "score": 0.683
+    },
+    {
+      "word": "audience",
+      "start": 2.536,
+      "end": 2.837,
+      "score": 0.804
+    },
+    {
+      "word": "enough",
+      "start": 2.957,
+      "end": 3.278,
+      "score": 0.918
+    },
+    {
+      "word": "movement",
+      "start": 3.879,
+      "end": 4.28,
+      "score": 0.877
+    },
+    {
+      "word": "without",
+      "start": 4.32,
+      "end": 4.641,
+      "score": 0.842
+    },
+    {
+      "word": "ruining",
+      "start": 4.701,
+      "end": 5.042,
+      "score": 0.85
+    },
+    {
+      "word": "the",
+      "start": 5.082,
+      "end": 5.162,
+      "score": 0.908
+    },
+    {
+      "word": "tension,",
+      "start": 5.242,
+      "end": 5.703,
+      "score": 0.864
+    },
+    {
+      "word": "which",
+      "start": 5.783,
+      "end": 5.923,
+      "score": 0.89
+    },
+    {
+      "word": "is",
+      "start": 6.004,
+      "end": 6.084,
+      "score": 0.924
+    },
+    {
+      "word": "hard",
+      "start": 6.364,
+      "end": 7.106,
+      "score": 0.622
+    },
+    {
+      "word": "to",
+      "start": 7.146,
+      "end": 7.226,
+      "score": 0.976
+    },
+    {
+      "word": "do.",
+      "start": 7.266,
+      "end": 7.427,
+      "score": 0.991
+    },
+    {
+      "word": "I",
+      "start": 7.447,
+      "end": 7.467,
+      "score": 0.997
+    },
+    {
+      "word": "think",
+      "start": 8.85,
+      "end": 8.99,
+      "score": 0.993
+    },
+    {
+      "word": "it's",
+      "start": 9.03,
+      "end": 9.15,
+      "score": 0.775
+    },
+    {
+      "word": "cool",
+      "start": 9.19,
+      "end": 9.351,
+      "score": 0.693
+    },
+    {
+      "word": "to",
+      "start": 9.391,
+      "end": 9.431,
+      "score": 0.412
+    },
+    {
+      "word": "watch",
+      "start": 9.511,
+      "end": 9.772,
+      "score": 0.778
+    },
+    {
+      "word": "because",
+      "start": 9.812,
+      "end": 10.032,
+      "score": 0.711
+    },
+    {
+      "word": "it",
+      "start": 10.072,
+      "end": 10.112,
+      "score": 0.668
+    },
+    {
+      "word": "never",
+      "start": 10.633,
+      "end": 10.794,
+      "score": 0.836
+    },
+    {
+      "word": "gets",
+      "start": 10.834,
+      "end": 10.994,
+      "score": 0.81
+    },
+    {
+      "word": "boring",
+      "start": 11.094,
+      "end": 11.495,
+      "score": 0.937
+    },
+    {
+      "word": "because",
+      "start": 11.555,
+      "end": 11.756,
+      "score": 0.654
+    },
+    {
+      "word": "one",
+      "start": 12.517,
+      "end": 12.598,
+      "score": 0.826
+    },
+    {
+      "word": "of",
+      "start": 12.638,
+      "end": 12.678,
+      "score": 0.997
+    },
+    {
+      "word": "them",
+      "start": 12.718,
+      "end": 12.818,
+      "score": 0.949
+    },
+    {
+      "word": "will",
+      "start": 12.858,
+      "end": 12.998,
+      "score": 0.947
+    },
+    {
+      "word": "be",
+      "start": 13.018,
+      "end": 13.079,
+      "score": 0.719
+    },
+    {
+      "word": "dating",
+      "start": 13.119,
+      "end": 13.379,
+      "score": 0.962
+    },
+    {
+      "word": "someone",
+      "start": 13.439,
+      "end": 13.74,
+      "score": 0.899
+    },
+    {
+      "word": "else",
+      "start": 13.84,
+      "end": 14.081,
+      "score": 0.687
+    },
+    {
+      "word": "and",
+      "start": 14.221,
+      "end": 14.301,
+      "score": 0.657
+    },
+    {
+      "word": "then",
+      "start": 14.341,
+      "end": 14.522,
+      "score": 0.823
+    },
+    {
+      "word": "they'll",
+      "start": 14.562,
+      "end": 15.724,
+      "score": 0.496
+    },
+    {
+      "word": "break",
+      "start": 15.744,
+      "end": 16.045,
+      "score": 0.609
+    },
+    {
+      "word": "up",
+      "start": 16.125,
+      "end": 16.205,
+      "score": 0.76
+    },
+    {
+      "word": "and",
+      "start": 16.506,
+      "end": 16.586,
+      "score": 0.859
+    },
+    {
+      "word": "he's",
+      "start": 16.646,
+      "end": 16.827,
+      "score": 0.782
+    },
+    {
+      "word": "into",
+      "start": 16.887,
+      "end": 17.147,
+      "score": 0.849
+    },
+    {
+      "word": "it",
+      "start": 17.227,
+      "end": 17.267,
+      "score": 0.802
+    },
+    {
+      "word": "now",
+      "start": 17.308,
+      "end": 17.548,
+      "score": 0.92
+    },
+    {
+      "word": "and",
+      "start": 17.628,
+      "end": 17.708,
+      "score": 0.911
+    },
+    {
+      "word": "the",
+      "start": 17.728,
+      "end": 17.889,
+      "score": 0.367
+    },
+    {
+      "word": "other",
+      "start": 17.949,
+      "end": 18.109,
+      "score": 0.757
+    },
+    {
+      "word": "one",
+      "start": 18.209,
+      "end": 18.31,
+      "score": 0.987
+    },
+    {
+      "word": "isn't",
+      "start": 18.33,
+      "end": 18.63,
+      "score": 0.705
+    },
+    {
+      "word": "anymore.",
+      "start": 18.67,
+      "end": 19.913,
+      "score": 0.786
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+name: gazelle
+channels:
+  - nvidia
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - timm
+  - scikit-learn
+  - matplotlib
+  - pandas
+  - numpy
+  - librosa
+  - pip
+  - pip:
+      - opensmile
+      - transformers
+      - git+https://github.com/m-bain/whisperx.git
+      - sentence-transformers
+      - sentencepiece
+      - multilingual-clip
+      - torch>=2.6
+      - torchvision
+      - torchaudio
+      - soundfile
