@@ -28,7 +28,8 @@ parser.add_argument('--image_root', type=str, default=None)
 parser.add_argument('--use_audio', action='store_true')
 parser.add_argument('--audio_roots', type=str, nargs='+', default=None)
 parser.add_argument('--audio_dims', type=int, nargs='+', default=None)
-parser.add_argument('--reg_lambda', type=float, default=1e-4)
+parser.add_argument('--reg_lambda', type=float, default=1e-5)
+parser.add_argument('--strict_load', action='store_true', help='Abort if checkpoint keys mismatch when set')
 
 # 视觉-only ckpt（来自数据集 A）
 parser.add_argument('--resume_ckpt', type=str, default=None, help='Path to visual-only ckpt from dataset A')
@@ -68,6 +69,8 @@ def main():
     os.makedirs(exp_dir, exist_ok=True)
 
     total_audio_dim = sum(args.audio_dims) if args.use_audio and args.audio_dims else 0
+    if args.use_audio and total_audio_dim == 0:
+        raise ValueError('--use_audio requires valid --audio_dims')
     model, transform = get_gazelle_model(args.model, use_audio=args.use_audio, audio_dim=total_audio_dim)
     model.cuda()
 
@@ -79,6 +82,14 @@ def main():
         missing, unexpected = model.load_state_dict(state, strict=False)
         print(f"   missing keys: {missing}")
         print(f"   unexpected keys: {unexpected}")
+        if args.strict_load and (len(missing) > 0 or len(unexpected) > 0):
+            raise RuntimeError('Checkpoint incompatible with model')
+        if 'linear.weight' in state:
+            w = state['linear.weight']
+            try:
+                print(f"   loaded linear.weight mean: {w.float().mean().item():.6f}")
+            except Exception:
+                pass
     else:
         print("\nℹ️ No --resume_ckpt provided (or file not found); training without loading A weights.")
 
@@ -97,6 +108,8 @@ def main():
     # DataLoaders
     train_dataset = GazeDataset('gazefollow', args.data_path, 'train', transform,
                                 image_root=args.image_root, audio_roots=args.audio_roots, audio_dims=args.audio_dims)
+    if args.use_audio and train_dataset.total_audio_dim == 0:
+        raise ValueError('Dataset provides no audio features but --use_audio is set')
     train_dl = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
                                            collate_fn=collate_fn, num_workers=args.n_workers)
 
@@ -130,6 +143,8 @@ def main():
             # 关键：将 bboxes 规整为 list[list[4]]
             safe_bboxes = _ensure_bbox_list_of_lists(bboxes)
             input_dict = {"images": imgs.cuda(), "bboxes": safe_bboxes}
+            if args.use_audio and audio is None:
+                raise RuntimeError('use_audio=True but audio features missing in batch')
             if args.use_audio and audio is not None:
                 input_dict["audio"] = audio.cuda(non_blocking=True)
 
@@ -170,6 +185,8 @@ def main():
 
                 safe_bboxes = _ensure_bbox_list_of_lists(bboxes)
                 input_dict = {"images": imgs.cuda(), "bboxes": safe_bboxes}
+                if args.use_audio and audio is None:
+                    raise RuntimeError('use_audio=True but audio features missing in eval batch')
                 if args.use_audio and audio is not None:
                     input_dict["audio"] = audio.cuda(non_blocking=True)
 
