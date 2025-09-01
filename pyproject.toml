@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gazelle"
 version = "0.0.1"
-authors = [{name = "Fiona Ryan"}]
+authors = [{name = "qiansuyu319"}]
 description = "Gaze-LLE: Gaze Target Estimation via Large-Scale Learned Encoders"
 requires-python = ">=3.8"
 dynamic = ["dependencies"]
