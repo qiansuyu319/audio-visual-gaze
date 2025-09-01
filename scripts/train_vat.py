@@ -27,6 +27,7 @@ parser.add_argument('--inout_loss_lambda', type=float, default=1.0)
 parser.add_argument('--lr_non_inout', type=float, default=1e-5)
 parser.add_argument('--lr_inout', type=float, default=1e-2)
 parser.add_argument('--n_workers', type=int, default=8)
+parser.add_argument('--image_root', type=str, default=None, help='override for image root; if set, resolves JSON rel paths under this dir')
 args = parser.parse_args()
 
 
@@ -48,10 +49,10 @@ def main():
         param.requires_grad = False
     print(f"Learnable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")
 
-    train_dataset = GazeDataset('videoattentiontarget', args.data_path, 'train', transform, in_frame_only=False, sample_rate=args.frame_sample_every)
+    train_dataset = GazeDataset('videoattentiontarget', args.data_path, 'train', transform, in_frame_only=False, sample_rate=args.frame_sample_every, image_root=args.image_root)
     train_dl = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn, num_workers=args.n_workers)
     # Note this eval dataloader samples frames sparsely for efficiency - for final results, run eval_vat.py which uses sample rate 1
-    eval_dataset = GazeDataset('videoattentiontarget', args.data_path, 'test', transform, in_frame_only=False, sample_rate=args.frame_sample_every)
+    eval_dataset = GazeDataset('videoattentiontarget', args.data_path, 'test', transform, in_frame_only=False, sample_rate=args.frame_sample_every, image_root=args.image_root)
     eval_dl = torch.utils.data.DataLoader(eval_dataset, batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn, num_workers=args.n_workers)
 
     heatmap_loss_fn = nn.BCELoss()

@@ -5,7 +5,6 @@ import os
 import random
 import torch
 import torch.nn as nn
-import wandb
 
 from gazelle.dataloader import GazeDataset, collate_fn
 from gazelle.model import get_gazelle_model
@@ -13,25 +12,21 @@ from gazelle.utils import gazefollow_auc, gazefollow_l2
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default="gazelle_dinov2_vitb14")
-parser.add_argument('--data_path', type=str, default='./data/gazefollow')
-parser.add_argument('--ckpt_save_dir', type=str, default='./experiments')
-parser.add_argument('--wandb_project', type=str, default='gazelle')
-parser.add_argument('--exp_name', type=str, default='train_gazefollow')
+parser.add_argument('--data_path', type=str, default='/root/autodl-tmp/.autodl/train/processed/frames')
+parser.add_argument('--ckpt_save_dir', type=str, default='./use_vgs_train')
+# parser.add_argument('--wandb_project', type=str, default='gazelle')
+# parser.add_argument('--exp_name', type=str, default='train_gazefollow')
 parser.add_argument('--log_iter', type=int, default=10, help='how often to log loss during training')
 parser.add_argument('--max_epochs', type=int, default=15)
 parser.add_argument('--batch_size', type=int, default=60)
 parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--n_workers', type=int, default=8)
+parser.add_argument('--image_root', type=str, default='/root/autodl-tmp/.autodl/train/processed/frames', help='override for image root; if set, resolves JSON rel paths under this dir')
 args = parser.parse_args()
 
-
 def main():
-    wandb.init(
-        project=args.wandb_project,
-        name=args.exp_name,
-        config=vars(args)
-    )
-    exp_dir = os.path.join(args.ckpt_save_dir, args.exp_name, datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    # 设置实验保存路径
+    exp_dir = os.path.join(args.ckpt_save_dir, datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     os.makedirs(exp_dir)
 
     model, transform = get_gazelle_model(args.model)
@@ -41,9 +36,9 @@ def main():
         param.requires_grad = False
     print(f"Learnable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")
 
-    train_dataset = GazeDataset('gazefollow', args.data_path, 'train', transform)
+    train_dataset = GazeDataset('gazefollow', args.data_path, 'train', transform, image_root=args.image_root)
     train_dl = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn, num_workers=args.n_workers)
-    eval_dataset = GazeDataset('gazefollow', args.data_path, 'test', transform)
+    eval_dataset = GazeDataset('gazefollow', args.data_path, 'test', transform, image_root=args.image_root)
     eval_dl = torch.utils.data.DataLoader(eval_dataset, batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn, num_workers=args.n_workers)
 
     loss_fn = nn.BCELoss()
@@ -68,7 +63,6 @@ def main():
             optimizer.step()
 
             if cur_iter % args.log_iter == 0:
-                wandb.log({"train/loss": loss.item()})
                 print("TRAIN EPOCH {}, iter {}/{}, loss={}".format(epoch, cur_iter, len(train_dl), round(loss.item(), 4)))
 
         scheduler.step()
@@ -101,7 +95,6 @@ def main():
         epoch_min_l2 = np.mean(min_l2s)
         epoch_auc = np.mean(aucs)
 
-        wandb.log({"eval/auc": epoch_auc, "eval/min_l2": epoch_min_l2, "eval/avg_l2": epoch_avg_l2, "epoch": epoch})
         print("EVAL EPOCH {}: AUC={}, Min L2={}, Avg L2={}".format(epoch, round(epoch_auc, 4), round(epoch_min_l2, 4), round(epoch_avg_l2, 4)))
 
         if epoch_min_l2 < best_min_l2:

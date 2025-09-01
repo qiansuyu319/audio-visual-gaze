@@ -1,161 +1,99 @@
 import os
-import pandas as pd
 import json
+import pandas as pd
 from PIL import Image
 import argparse
-
-# preprocessing adapted from https://github.com/ejcgt/attention-target-detection/blob/master/dataset.py
+from collections import defaultdict
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_path", type=str, default="./data/gazefollow")
+parser.add_argument("--data_path", type=str, default="./data/vgs")  # 存放 CSV 和 frames 的根目录
+parser.add_argument("--csv_train", type=str, default="GT_CSV")
+parser.add_argument("--csv_test", type=str, default="test_GT.csv")
+parser.add_argument("--frame_root", type=str, default="frames")
 args = parser.parse_args()
 
 
-def main(DATA_PATH):
+def process_csv(csv_path, img_root, is_train=True):
+    df = pd.read_csv(csv_path)
 
-    # TRAIN
-    train_csv_path = os.path.join(DATA_PATH, "train_annotations_release.txt")
-    column_names = ['path', 'idx', 'body_bbox_x', 'body_bbox_y', 'body_bbox_w', 'body_bbox_h', 'eye_x', 'eye_y',
-                                'gaze_x', 'gaze_y', 'bbox_x_min', 'bbox_y_min', 'bbox_x_max', 'bbox_y_max', 'inout', 'source', 'meta']
-    df = pd.read_csv(train_csv_path, header=None, names=column_names, index_col=False)
-    df = df[df['inout'] != -1]
-    df = df.groupby("path").agg(list) # aggregate over frames
+    FRAME_DICT = defaultdict(list)
+    for _, row in df.iterrows():
+        img_name = str(row["frame_name"]).replace(".jpg.jpg", ".jpg")
+        FRAME_DICT[img_name].append(row)
 
     multiperson_ex = 0
-    TRAIN_FRAMES = []
-    for path, row in df.iterrows():
-        img_path = os.path.join(DATA_PATH, path)
-        img = Image.open(img_path)
-        width, height = img.size
+    FRAMES = []
 
-        num_people = len(row['idx'])
+    for img_name, rows in FRAME_DICT.items():
+        video_id = img_name[:3]  # 前三位是 video_id
+        img_path = os.path.join(img_root, video_id, img_name)
+        if not os.path.exists(img_path):
+            print(f"[WARN] missing image {img_path}")
+            continue
+
+        with Image.open(img_path) as im:
+            width, height = im.size
+
+        num_people = len(rows)
         if num_people > 1:
             multiperson_ex += 1
+
         heads = []
-
-        for i in range(num_people):
-            xmin, ymin, xmax, ymax = row['bbox_x_min'][i], row['bbox_y_min'][i], row['bbox_x_max'][i], row['bbox_y_max'][i]
-            gazex = row['gaze_x'][i] * float(width)
-            gazey = row['gaze_y'][i] * float(height)
-            gazex_norm = row['gaze_x'][i]
-            gazey_norm = row['gaze_y'][i]
-
+        for i, row in enumerate(rows):
+            xmin, ymin, xmax, ymax = int(row["head_xmin"]), int(row["head_ymin"]), int(row["head_xmax"]), int(row["head_ymax"])
+            gazex, gazey = int(row["gaze_x"]), int(row["gaze_y"])
+            gazex_norm, gazey_norm = gazex / width, gazey / height
 
             if xmin > xmax:
-                temp = xmin
-                xmin = xmax
-                xmax = temp
+                xmin, xmax = xmax, xmin
             if ymin > ymax:
-                temp = ymin
-                ymin = ymax
-                ymax = temp
+                ymin, ymax = ymax, ymin
 
-            # move in out of frame bbox annotations
             xmin = max(xmin, 0)
             ymin = max(ymin, 0)
             xmax = min(xmax, width)
             ymax = min(ymax, height)
 
-            heads.append({
-                'bbox': [xmin, ymin, xmax, ymax],
-                'bbox_norm': [xmin / float(width), ymin / float(height), xmax / float(width), ymax / float(height)],
-                'inout': row['inout'][i],
-                'gazex': [gazex], # convert to list for consistency with multi-annotation format
-                'gazey': [gazey],
-                'gazex_norm': [gazex_norm],
-                'gazey_norm': [gazey_norm],
-                'head_id': i
-            })
-        TRAIN_FRAMES.append({
-            'path': path,
-            'heads': heads,
-            'num_heads': num_people,
-            'width': width,
-            'height': height,
+            head = {
+                "bbox": [xmin, ymin, xmax, ymax],
+                "bbox_norm": [xmin/width, ymin/height, xmax/width, ymax/height],
+                "gazex": [gazex],
+                "gazey": [gazey],
+                "gazex_norm": [gazex_norm],
+                "gazey_norm": [gazey_norm],
+                "inout": 1 if is_train else 1,  # 测试集默认 in-frame
+                "head_id": int(row["person_id"]) if "person_id" in row else i
+            }
+            if not is_train:
+                head["num_annot"] = 1  # 测试集加 num_annot 字段
+            heads.append(head)
+
+        FRAMES.append({
+            "path": os.path.join(video_id, img_name),
+            "heads": heads,
+            "num_heads": num_people,
+            "width": width,
+            "height": height
         })
 
-    print("Train set: {} frames, {} multi-person".format(len(TRAIN_FRAMES), multiperson_ex))
-    out_file = open(os.path.join(DATA_PATH, "train_preprocessed.json"), "w")
-    json.dump(TRAIN_FRAMES, out_file)
+    split = "Train" if is_train else "Test"
+    print(f"{split} set: {len(FRAMES)} frames, {multiperson_ex} multi-person")
+    return FRAMES
 
-    # TEST
-    test_csv_path = os.path.join(DATA_PATH, "test_annotations_release.txt")
-    column_names = ['path', 'idx', 'body_bbox_x', 'body_bbox_y', 'body_bbox_w', 'body_bbox_h', 'eye_x', 'eye_y',
-                                'gaze_x', 'gaze_y', 'bbox_x_min', 'bbox_y_min', 'bbox_x_max', 'bbox_y_max', 'source', 'meta']
-    df = pd.read_csv(test_csv_path, header=None, names=column_names, index_col=False)
 
-    TEST_FRAME_DICT = {}
-    df = df.groupby(["path", "eye_x"]).agg(list) # aggregate over frames
-    for id, row in df.iterrows(): # aggregate by frame
-        path, _ = id
-        if path in TEST_FRAME_DICT.keys():
-            TEST_FRAME_DICT[path].append(row)
-        else:
-            TEST_FRAME_DICT[path] = [row]
+def main():
+    train_csv_path = os.path.join(args.data_path, args.csv_train)
+    test_csv_path = os.path.join(args.data_path, args.csv_test)
+    frame_root = os.path.join(args.data_path, args.frame_root)
 
-    multiperson_ex = 0
-    TEST_FRAMES = []
-    for path in TEST_FRAME_DICT.keys():
-        img_path = os.path.join(DATA_PATH, path)
-        img = Image.open(img_path)
-        width, height = img.size
+    TRAIN_FRAMES = process_csv(train_csv_path, frame_root, is_train=True)
+    with open(os.path.join(args.data_path, "train_preprocessed.json"), "w") as f:
+        json.dump(TRAIN_FRAMES, f)
 
-        item = TEST_FRAME_DICT[path]
-        num_people = len(item)
-        heads = []
-
-        for i in range(num_people):
-            row = item[i]
-            assert(row['bbox_x_min'].count(row['bbox_x_min'][0]) == len(row['bbox_x_min'])) # quick check that all bboxes are equivalent
-            xmin, ymin, xmax, ymax = row['bbox_x_min'][0], row['bbox_y_min'][0], row['bbox_x_max'][0], row['bbox_y_max'][0]
-            
-            if xmin > xmax:
-                temp = xmin
-                xmin = xmax
-                xmax = temp
-            if ymin > ymax:
-                temp = ymin
-                ymin = ymax
-                ymax = temp
-            
-            # move in out of frame bbox annotations
-            xmin = max(xmin, 0)
-            ymin = max(ymin, 0)
-            xmax = min(xmax, width)
-            ymax = min(ymax, height)
-
-            gazex_norm = [x for x in row['gaze_x']]
-            gazey_norm = [y for y in row['gaze_y']]
-            gazex = [x * float(width) for x in row['gaze_x']]
-            gazey = [y * float(height) for y in row['gaze_y']]
-
-            heads.append({
-                'bbox': [xmin, ymin, xmax, ymax],
-                'bbox_norm': [xmin / float(width), ymin / float(height), xmax / float(width), ymax / float(height)],
-                'gazex': gazex,
-                'gazey': gazey,
-                'gazex_norm': gazex_norm,
-                'gazey_norm': gazey_norm,
-                'inout': 1, # all test frames are in frame
-                'num_annot': len(gazex),
-                'head_id': i
-            })
-        
-        TEST_FRAMES.append({
-            'path': path,
-            'heads': heads,
-            'num_heads': num_people,
-            'width': width,
-            'height': height,
-        })
-        if num_people > 1:
-            multiperson_ex += 1
-
-    print("Test set: {} frames, {} multi-person".format(len(TEST_FRAMES), multiperson_ex))
-    out_file = open(os.path.join(DATA_PATH, "test_preprocessed.json"), "w")
-    json.dump(TEST_FRAMES, out_file)
-
+    TEST_FRAMES = process_csv(test_csv_path, frame_root, is_train=False)
+    with open(os.path.join(args.data_path, "test_preprocessed.json"), "w") as f:
+        json.dump(TEST_FRAMES, f)
 
 
 if __name__ == "__main__":
-    main(args.data_path)
+    main()

@@ -50,15 +50,31 @@ def random_crop(img, bbox, gazex, gazey, inout):
     crop_reg_xmax = max(bbox_xmax, max(gazex)) if inout else bbox_xmax
     crop_reg_ymax = max(bbox_ymax, max(gazey)) if inout else bbox_ymax
 
-    try:
-        xmin = random.randint(0, int(crop_reg_xmin))
-        ymin = random.randint(0, int(crop_reg_ymin))
-        xmax = random.randint(int(crop_reg_xmax), width)
-        ymax = random.randint(int(crop_reg_ymax), height)
-    except:
-        import pdb; pdb.set_trace()
+    # Clamp to valid image bounds
+    crop_reg_xmin = int(max(0, min(width - 1, crop_reg_xmin)))
+    crop_reg_ymin = int(max(0, min(height - 1, crop_reg_ymin)))
+    crop_reg_xmax = int(max(0, min(width - 1, crop_reg_xmax)))
+    crop_reg_ymax = int(max(0, min(height - 1, crop_reg_ymax)))
 
-    img = torchvision.transforms.functional.crop(img, ymin, xmin, ymax - ymin, xmax - xmin)
+    # Ensure min <= max
+    if crop_reg_xmin > crop_reg_xmax:
+        crop_reg_xmin, crop_reg_xmax = crop_reg_xmax, crop_reg_xmin
+    if crop_reg_ymin > crop_reg_ymax:
+        crop_reg_ymin, crop_reg_ymax = crop_reg_ymax, crop_reg_ymin
+
+    # Sample a valid crop rectangle
+    xmin = random.randint(0, crop_reg_xmin) if crop_reg_xmin >= 0 else 0
+    ymin = random.randint(0, crop_reg_ymin) if crop_reg_ymin >= 0 else 0
+    xmax = random.randint(crop_reg_xmax, max(crop_reg_xmax, width - 1))
+    ymax = random.randint(crop_reg_ymax, max(crop_reg_ymax, height - 1))
+
+    # Guarantee positive area
+    if xmax <= xmin:
+        xmax = min(width - 1, xmin + 1)
+    if ymax <= ymin:
+        ymax = min(height - 1, ymin + 1)
+
+    img = torchvision.transforms.functional.crop(img, ymin, xmin, max(1, ymax - ymin), max(1, xmax - xmin))
     bbox = [bbox_xmin - xmin, bbox_ymin - ymin, bbox_xmax - xmin, bbox_ymax - ymin]
     gazex = [x - xmin for x in gazex]
     gazey = [y - ymin for y in gazey]
@@ -139,6 +155,11 @@ def gazefollow_auc(heatmap, gt_gazex, gt_gazey, height, width):
             y = min(y, height - 1)
             target_map[y, x] = 1
     resized_heatmap = torch.nn.functional.interpolate(heatmap.unsqueeze(dim=0).unsqueeze(dim=0), (height, width), mode='bilinear').squeeze()
+    # Guard against single-class targets which make ROC AUC undefined
+    num_pos = int(target_map.sum())
+    num_neg = target_map.size - num_pos
+    if num_pos == 0 or num_neg == 0:
+        return 0.5
     auc = roc_auc_score(target_map.flatten(), resized_heatmap.cpu().flatten())
     
     return auc
@@ -153,8 +174,12 @@ def gazefollow_l2(heatmap, gt_gazex, gt_gazey):
     gazex = np.array(gt_gazex)
     gazey = np.array(gt_gazey)
 
-    avg_l2 = np.sqrt((pred_x - gazex.mean())**2 + (pred_y - gazey.mean())**2)
+    # 计算到每个注视点的距离
     all_l2s = np.sqrt((pred_x - gazex)**2 + (pred_y - gazey)**2)
+    
+    # avg_l2: 所有距离的平均值
+    avg_l2 = all_l2s.mean().item()
+    # min_l2: 最小距离
     min_l2 = all_l2s.min().item()
 
     return avg_l2, min_l2
@@ -173,6 +198,11 @@ def vat_auc(heatmap, gt_gazex, gt_gazey):
     ul = [max(0, int(gazex - 3 * sigma)), max(0, int(gazey - 3 * sigma))]
     br = [min(int(gazex + 3 * sigma + 1), res-1), min(int(gazey + 3 * sigma + 1), res-1)]
     target_map[ul[1]:br[1], ul[0]:br[0]] = 1
+    # Guard against single-class targets which make ROC AUC undefined
+    num_pos = int(target_map.sum())
+    num_neg = target_map.size - num_pos
+    if num_pos == 0 or num_neg == 0:
+        return 0.5
     auc = roc_auc_score(target_map.flatten(), heatmap.cpu().flatten())
     return auc
 
