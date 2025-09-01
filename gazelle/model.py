@@ -74,7 +74,7 @@ class GazeLLE(nn.Module):
         self.use_audio = use_audio
         self.audio_dim = audio_dim
         if self.use_audio:
-            self.audio_alpha = nn.Parameter(torch.zeros(1)) 
+            self.audio_alpha = nn.Parameter(torch.full((1,), 0.1))
             self.audio_norm = nn.LayerNorm(self.audio_dim)
             self.audio_fc = nn.Linear(self.audio_dim, self.dim)
             self.audio_drop = nn.Dropout(p=fusion_dropout)

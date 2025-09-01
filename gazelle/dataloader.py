@@ -117,11 +117,41 @@ class GazeDataset(torch.utils.data.dataset.Dataset):
 
         img = self.transform(img)
 
+        audio = None
+        if self.audio_roots:
+            rel_key = rel_img_path
+            rel_audio_paths = None
+            if self.audio_map and rel_key in self.audio_map:
+                rel_audio_paths = self.audio_map[rel_key]
+                if not isinstance(rel_audio_paths, (list, tuple)):
+                    rel_audio_paths = [rel_audio_paths]
+            else:
+                base = os.path.splitext(rel_key)[0] if rel_key else None
+                if base is not None:
+                    rel_audio_paths = [base + ".npy"] * len(self.audio_roots)
+
+            if rel_audio_paths and len(rel_audio_paths) == len(self.audio_roots):
+                feats = []
+                for root, dim, rel_a in zip(self.audio_roots, self.audio_dims, rel_audio_paths):
+                    a_path = os.path.join(root, rel_a)
+                    if os.path.exists(a_path):
+                        feat = torch.from_numpy(np.load(a_path)).float()
+                    elif self.missing_audio == "zeros":
+                        feat = torch.zeros(dim, dtype=torch.float32)
+                    else:
+                        feat = None
+                    if feat is None:
+                        feats = None
+                        break
+                    feats.append(feat)
+                if feats is not None:
+                    audio = torch.cat(feats, dim=0)
+
         if self.split == "train":
             heatmap = utils.get_heatmap(gazex_norm[0], gazey_norm[0], 64, 64)
-            return img, bbox_norm, gazex_norm, gazey_norm, torch.tensor(inout), height, width, heatmap
+            return img, bbox_norm, gazex_norm, gazey_norm, torch.tensor(inout), height, width, heatmap, audio
         else:
-            return img, bbox_norm, gazex_norm, gazey_norm, torch.tensor(inout), height, width
+            return img, bbox_norm, gazex_norm, gazey_norm, torch.tensor(inout), height, width, audio
 
     def __len__(self):
         return len(self.data_idxs)
@@ -129,7 +159,13 @@ class GazeDataset(torch.utils.data.dataset.Dataset):
 
 def collate_fn(batch):
     transposed = list(zip(*batch))
-    return tuple(
-        torch.stack(items) if isinstance(items[0], torch.Tensor) else list(items)
-        for items in transposed
-    )
+    collated = []
+    for items in transposed:
+        first = items[0]
+        if isinstance(first, torch.Tensor):
+            collated.append(torch.stack(items))
+        elif first is None:
+            collated.append(None)
+        else:
+            collated.append(list(items))
+    return tuple(collated)
