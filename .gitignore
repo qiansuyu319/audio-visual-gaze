@@ -1,0 +1,27 @@
+# Ignore raw data
+frames/
+videos/
+*.avi
+*.mp4
+*.mov
+*.mkv
+
+# Ignore checkpoints and large model files
+checkpoints/
+*.pt
+*.pth
+*.tar
+*.tar.gz
+*.zip
+
+# Ignore experiment logs
+experiments/
+runs/
+wandb/
+
+# Ignore temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
