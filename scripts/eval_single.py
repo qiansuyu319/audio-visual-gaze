@@ -3,7 +3,7 @@ import torch
 from PIL import Image
 import os
 import numpy as np
-import pandas as pd
+import json
 from tqdm import tqdm
 
 from gazelle.model import get_gazelle_model
@@ -18,8 +18,8 @@ DEBUG_AUDIO = True
 DEBUG_MODEL = True
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--img_root", type=str, default="/root/autodl-tmp/test/frames")
-parser.add_argument("--csv_root", type=str, default="/root/autodl-tmp/test/GT_CSV")
+parser.add_argument("--img_root", type=str, default="/root/autodl-tmp/eval/frames")
+parser.add_argument("--json_path", type=str, default="/root/autodl-tmp/eval/annotations.json")
 parser.add_argument("--model_name", type=str, default="gazelle_dinov2_vitb14")
 parser.add_argument("--ckpt_path", type=str, default="/root/gazelle/scripts/experiments/train_gazefollow_audio_debug/2025-09-01_09-01-10/best_model.pth")
 parser.add_argument("--batch_size", type=int, default=64)
@@ -46,7 +46,7 @@ def parse_frame_and_pid(name: str):
 
 
 class VGSDataset(torch.utils.data.Dataset):
-    def __init__(self, csv_root, img_root, transform, audio_wav_root=None, audio_fps=30, audio_win_sec=0.5):
+    def __init__(self, json_path, img_root, transform, audio_wav_root=None, audio_fps=30, audio_win_sec=0.5):
         self.items = []
         self.img_root = img_root
         self.transform = transform
@@ -55,24 +55,34 @@ class VGSDataset(torch.utils.data.Dataset):
         self.audio_win_sec = audio_win_sec
         self.video_to_wav = {}
 
-        csv_files = [f for f in sorted(os.listdir(csv_root)) if f.endswith(".csv")]
-        if not csv_files:
-            raise RuntimeError(f"No CSV files found in {csv_root}")
+        if not os.path.isfile(json_path):
+            raise RuntimeError(f"JSON file not found: {json_path}")
 
-        for csv_file in csv_files:
-            df = pd.read_csv(os.path.join(csv_root, csv_file), header=None)
-            for _, row in df.iterrows():
-                fname = row[0]
-                frame_name, pid = parse_frame_and_pid(fname)
-                img_path = os.path.join(img_root, frame_name)
-                if not os.path.isfile(img_path):
-                    continue
+        with open(json_path, 'r') as f:
+            data = json.load(f)
 
-                x1, y1, x2, y2, gx, gy = row[1], row[2], row[3], row[4], row[5], row[6]
-                # also record video_id and frame index for audio mapping
-                vid = frame_name[:3]
-                frame_idx = int(frame_name[3:6]) - 1
-                self.items.append((img_path, [x1, y1, x2, y2], [gx, gy], vid, frame_idx))
+        for item in data:
+            fname = item.get("fname") or item.get("file_name") or item.get("path")
+            if fname is None:
+                continue
+            frame_name, _ = parse_frame_and_pid(os.path.basename(fname))
+            img_path = os.path.join(img_root, frame_name)
+            if not os.path.isfile(img_path):
+                continue
+
+            if "bbox" in item:
+                x1, y1, x2, y2 = item["bbox"]
+            else:
+                x1, y1, x2, y2 = item["x1"], item["y1"], item["x2"], item["y2"]
+
+            if "gaze" in item:
+                gx, gy = item["gaze"][:2]
+            else:
+                gx, gy = item["gx"], item["gy"]
+
+            vid = frame_name[:3]
+            frame_idx = int(frame_name[3:6]) - 1
+            self.items.append((img_path, [x1, y1, x2, y2], [gx, gy], vid, frame_idx))
 
     def __getitem__(self, idx):
         img_path, bbox, gaze, video_id, frame_idx = self.items[idx]
@@ -208,7 +218,7 @@ def main():
             except Exception as e:
                 print(f"Error zeroing audio_alpha: {e}")
 
-    dataset = VGSDataset(args.csv_root, args.img_root, transform,
+    dataset = VGSDataset(args.json_path, args.img_root, transform,
                          audio_wav_root=args.audio_wav_root,
                          audio_fps=args.audio_fps,
                          audio_win_sec=args.audio_win_sec)

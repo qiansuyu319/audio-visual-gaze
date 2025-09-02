@@ -18,5 +18,5 @@ fi
 
 # 执行评估脚本（以模块方式运行，确保项目根目录在 PYTHONPATH 中）
 python -m scripts.eval_single \
-  --img_root "/root/autodl-tmp/test/frames" \
-  --csv_root "/root/autodl-tmp/test/GT_CSV"
+  --img_root "/root/autodl-tmp/eval/frames" \
+  --json_path "/root/autodl-tmp/eval/annotations.json"
